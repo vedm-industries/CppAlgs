@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <climits>
+
+using namespace std;
+
+typedef pair<int, int> pii;
+
+void dijkstra(vector<vector<pii>>& graph, int source) {
+  int V = graph.size();
+  vector<int> dist(V, INT_MAX);
+  priority_queue<pii, vector<pii>, greater<pii>> pq;
+
+  dist[source] = 0;
+  pq.push({0, source});
+
+  while (!pq.empty()) {
+    int u = pq.top().second;
+    pq.pop();
+
+    for (const auto& edge : graph[u]) {
+      int v = edge.first;
+      int weight = edge.second;
+
+      if (dist[u] + weight < dist[v]) {
+        dist[v] = dist[u] + weight;
+        pq.push({dist[v], v});
+      }
+    }
+  }
+
+  // Print the shortest distances from the source vertex
+  cout << "Shortest distances from source vertex " << source << ":\n";
+  for (int i = 0; i < V; i++) {
+    if (dist[i] != INT_MAX)
+      cout << "Vertex " << i << ": " << dist[i] << endl;
+    else
+      cout << "Vertex " << i << ": Not reachable" << endl;
+  }
+}
+
+int main() {
+  int V, E, source;
+  cout << "Enter the number of vertices: ";
+  cin >> V;
+  cout << "Enter the number of edges: ";
+  cin >> E;
+
+  vector<vector<pii>> graph(V);
+
+  cout << "Enter the edges (source, destination, weight):\n";
+  for (int i = 0; i < E; i++) {
+    int u, v, w;
+    cin >> u >> v >> w;
+    graph[u].push_back({v, w});
+    graph[v].push_back({u, w}); // For undirected graphs
+  }
+
+  cout << "Enter the source vertex: ";
+  cin >> source;
+
+  dijkstra(graph, source);
+
+  return 0;
+}
